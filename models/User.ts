@@ -23,6 +23,9 @@ const User = db.define('User',{
     password:{
         type:TEXT
     }
+},
+{
+    freezeTableName:true
 })
 
 export default User;

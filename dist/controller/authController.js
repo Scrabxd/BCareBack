@@ -16,10 +16,35 @@ exports.register = exports.login = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const User_1 = __importDefault(require("../models/User"));
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { email, password } = req.body;
+    const { email, userPassword } = req.body;
     try {
+        const getUser = yield User_1.default.findOne({
+            where: {
+                email
+            }
+        });
+        if (getUser) {
+            const { password } = getUser;
+            const comPassword = bcrypt_1.default.compareSync(userPassword, password);
+            if (comPassword) {
+                delete getUser.dataValues.password;
+                return res.json({
+                    getUser
+                });
+            }
+            return res.json({
+                msg: "Invalid combination of user and password"
+            });
+        }
+        return res.json({
+            msg: "User not found"
+        });
     }
     catch (error) {
+        console.log(error);
+        return res.json({
+            msg: "Error while loggin."
+        });
     }
 });
 exports.login = login;

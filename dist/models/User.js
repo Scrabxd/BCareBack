@@ -26,6 +26,8 @@ const User = db_1.default.define('User', {
     password: {
         type: sequelize_1.TEXT
     }
+}, {
+    freezeTableName: true
 });
 exports.default = User;
 //# sourceMappingURL=User.js.map
