@@ -13,6 +13,15 @@ const User = db.define('User',{
     },
     lastName:{
         type:TEXT
+    },
+    SSN:{
+        type:TEXT
+    },
+    email:{
+        type:TEXT
+    },
+    password:{
+        type:TEXT
     }
 })
 

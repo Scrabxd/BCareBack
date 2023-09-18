@@ -16,6 +16,15 @@ const User = db_1.default.define('User', {
     },
     lastName: {
         type: sequelize_1.TEXT
+    },
+    SSN: {
+        type: sequelize_1.TEXT
+    },
+    email: {
+        type: sequelize_1.TEXT
+    },
+    password: {
+        type: sequelize_1.TEXT
     }
 });
 exports.default = User;

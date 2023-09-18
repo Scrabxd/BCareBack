@@ -8,8 +8,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.login = void 0;
+exports.register = exports.login = void 0;
+const bcrypt_1 = __importDefault(require("bcrypt"));
+const User_1 = __importDefault(require("../models/User"));
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body;
     try {
@@ -18,4 +23,27 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.login = login;
+const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { firstName, lastName, SSN, email, password } = req.body;
+    try {
+        const bcryptPass = bcrypt_1.default.hashSync(password, 10);
+        const createUser = yield User_1.default.create({
+            firstName,
+            lastName,
+            SSN,
+            email,
+            password: bcryptPass
+        });
+        return res.json({
+            createUser
+        });
+    }
+    catch (error) {
+        console.log(error);
+        return res.json({
+            msg: "Error while registering a user."
+        });
+    }
+});
+exports.register = register;
 //# sourceMappingURL=authController.js.map

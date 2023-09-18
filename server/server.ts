@@ -44,7 +44,7 @@ export class Server {
     }
 
     middlewares(){
-
+        this.app.use(Express.json())
     }
 
 

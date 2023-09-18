@@ -44,6 +44,7 @@ class Server {
         this.app.use(this.apiPath.auth, auth_1.authApp);
     }
     middlewares() {
+        this.app.use(express_1.default.json());
     }
     listen() {
         this.app.listen(this.port, () => console.log(`RUNNING ON PORT ${this.port}`));
