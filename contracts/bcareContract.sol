@@ -1,27 +1,26 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-// This contract holds the information and processes of cancer patients
 contract BcareContract {
-    address public owner; // Owner of the contract
-    uint256 public patientCount; // Total count of patients
+    address public owner;
 
-    // Struct to store patient information and processes
-    struct Patient {
-        uint256 id;
-        string name;
-        uint256[] processes; // Array of process IDs
+    // Struct to store patient information
+    struct PatientInfo {
+        string cancerType;
+        uint256 cancerStage;
+        uint256 age;
+        uint256 weight;
+        uint256 height;
+        string gender;
     }
 
-    mapping(uint256 => Patient) public patients; // Map patient ID to patient struct
-
-    // Modifier to restrict access to the contract owner
-    modifier onlyOwner() {
-        require(
-            msg.sender == owner,
-            "Only the contract owner can call this function"
-        );
-        _;
+    // Struct to store appointment information
+    struct Appointment {
+        uint256 appointmentDate;
+        string[] prescribedMedicines;
+        string[] processes;
+        string[] examsAndAnalysis;
+        string medRecommendations;
     }
 
     // Constructor to set the contract owner
@@ -29,23 +28,71 @@ contract BcareContract {
         owner = msg.sender;
     }
 
-    // Function to add a new patient
-    function addPatient(string memory _name) public onlyOwner {
-        uint256 id = patientCount++;
-        patients[id] = Patient(id, _name, new uint256[](0));
+    // Mapping to associate patient addresses with their PatientInfo
+    mapping(address => PatientInfo) public patientInfo;
+
+    // Mapping to associate patient addresses with lists of appointments
+    mapping(address => Appointment[]) public appointments;
+
+    // Modifier to restrict access to doctors only
+    modifier onlyDoctor() {
+        require(
+            msg.sender == owner,
+            "Only the contract owner can call this function"
+        );
+        _;
     }
 
-    // Function to add a process to a patient
-    function addProcess(
-        uint256 _patientId,
-        uint256 _processId
-    ) public onlyOwner {
-        Patient storage patient = patients[_patientId];
-        patient.processes.push(_processId);
+    // Function to add or update patient information (for doctors)
+    function addOrUpdatePatientInfo(
+        address patientAddress,
+        string memory _cancerType,
+        uint256 _cancerStage,
+        uint256 _age,
+        uint256 _weight,
+        uint256 _height,
+        string memory _gender
+    ) public onlyDoctor {
+        // Create a new PatientInfo struct with the provided information
+        PatientInfo memory newPatientInfo = PatientInfo({
+            cancerType: _cancerType,
+            cancerStage: _cancerStage,
+            age: _age,
+            weight: _weight,
+            height: _height,
+            gender: _gender
+        });
+
+        // Store the patient information using the provided patient address as the key
+        patientInfo[patientAddress] = newPatientInfo;
     }
 
-    // Retrieve patient information by ID
-    function getPatient(uint256 _id) public view returns (Patient memory) {
-        return patients[_id];
+    // Function to schedule an appointment (for doctors)
+    function scheduleAppointment(
+        address patientAddress,
+        uint256 _appointmentDate,
+        string[] memory _prescribedMedicines,
+        string[] memory _processes,
+        string[] memory _examsAndAnalysis,
+        string memory _medRecommendations
+    ) public onlyDoctor {
+        // Create a new Appointment struct for the appointment
+        Appointment memory newAppointment = Appointment({
+            appointmentDate: _appointmentDate,
+            prescribedMedicines: _prescribedMedicines,
+            processes: _processes,
+            examsAndAnalysis: _examsAndAnalysis,
+            medRecommendations: _medRecommendations
+        });
+
+        // Add the appointment to the patient's list of appointments
+        appointments[patientAddress].push(newAppointment);
+    }
+
+    // Function to retrieve a patient's appointments
+    function getAppointments(
+        address patientAddress
+    ) public view returns (Appointment[] memory) {
+        return appointments[patientAddress];
     }
 }
